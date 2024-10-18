@@ -164,25 +164,25 @@ double dot(vector<double> v1, vector<double> v2)
 // Function to calculate reciprocal lattice vectors b1, b2, b3 from unit cell lattice vectors a1, a2, a3
 void CalculateReciprocalLatticeVectors()
 {
-    vector<double> h1 = cross(a2, a3);   // h1 = a2 × a3
-    double d1 = dot(a1, h1);             // d1 = a1 · (a2 × a3)
+    vector<double> h1 = cross(a2, a3);   // h1 = a2 x a3
+    double d1 = dot(a1, h1);             // d1 = a1 x (a2 x a3)
     for (int i=0; i<h1.size(); i++)
     { 
-        b1[i] = (h1[i] / d1);            // b1 = a2 × a3 / [a1 · (a2 × a3)]
+        b1[i] = (h1[i] / d1);            // b1 = a2 x a3 / [a1 x (a2 x a3)]
     } 
 
-    vector<double> h2 = cross(a3, a1);   // h2 = a3 × a1
-    double d2 = dot(a2, h2);             // d2 = a2 · (a3 × a1)
+    vector<double> h2 = cross(a3, a1);   // h2 = a3 x a1
+    double d2 = dot(a2, h2);             // d2 = a2 x (a3 x a1)
     for (int i=0; i<h2.size(); i++)
     {
-        b2[i] = (h2[i] / d2);            // b2 = a3 × a1 / [a2 · (a3 × a1)]
+        b2[i] = (h2[i] / d2);            // b2 = a3 x a1 / [a2 x (a3 x a1)]
     }
     
-    vector<double> h3 = cross(a1, a2);   // h3 = a1 × a2
-    double d3 = dot(a3, h3);             // d3 = a3 · (a1 × a2)
+    vector<double> h3 = cross(a1, a2);   // h3 = a1 x a2
+    double d3 = dot(a3, h3);             // d3 = a3 x (a1 x a2)
     for (int i=0; i<h3.size(); i++)
     {
-        b3[i] = (h3[i] / d3);            // b3 = a1 × a2 / [a3 · (a1 × a2)]
+        b3[i] = (h3[i] / d3);            // b3 = a1 x a2 / [a3 x (a1 x a2)]
     }
 }
 
@@ -206,52 +206,6 @@ void ApplyPeriodicBoundaryCondition()
 }
 
 // Function to write neighbor list for different structures
-void WriteNeighborlist(string structure_type)
-{
-    // Clean the vector container
-    label_1_list.clear();
-    label_2_list.clear();
-    dist_list.clear();
-
-    string filename = "Neighbor_List_";
-    filename += structure_type;
-    filename += "_OverCounted";
-    filename += ".txt";
-    ofstream MyFile(filename);
-    
-    // write the column names
-    MyFile << "Label_1,Label_2,Distance\n";
-
-    // loop for every atom pairs
-    for (int idx_i=0; idx_i<n_atoms; idx_i++)
-    {
-        for (int idx_j=0; idx_j<idx_i; idx_j++)
-        {   
-            // calculate a displacement coordinate of pair
-            coor_1[0] = x[idx_j] - x[idx_i];
-            coor_1[1] = y[idx_j] - y[idx_i];
-            coor_1[2] = z[idx_j] - z[idx_1];
-                
-            // apply periodic boundary condition (PBC)
-            ApplyPeriodicBoundaryCondition();
-
-            // calculate the distance of the pair after PBC
-            dist = sqrt(pow(coor_2[0], 2) + pow(coor_2[1], 2) + pow(coor_2[2], 2));
-                
-            // include the pair if the distance is less than cut-off
-            if (dist < (cut_off + cut_off_delta))
-            {
-                MyFile << idx_i << "," << idx_j << "," << dist <<"\n";
-                label_1_list.push_back(idx_i);
-                label_2_list.push_back(idx_j);
-                dist_list.push_back(dist);
-            } 
-        }
-    }
-    cout << "Number of pairs included: " << dist_list.size() << "\n";
-    MyFile.close();
-}
-
 void WriteNeighborlist_OverCounted(string structure_type)
 {
     // Clean the vector container
@@ -278,7 +232,7 @@ void WriteNeighborlist_OverCounted(string structure_type)
                 // calculate a displacement coordinate of pair
                 coor_1[0] = x[idx_j] - x[idx_i];
                 coor_1[1] = y[idx_j] - y[idx_i];
-                coor_1[2] = z[idx_j] - z[idx_1];
+                coor_1[2] = z[idx_j] - z[idx_i];
                 
                 // apply periodic boundary condition (PBC)
                 ApplyPeriodicBoundaryCondition();
@@ -349,10 +303,10 @@ void GenerateNeighborlist_OverCounted(string structure_type)
 }
 
 // Newly added for lab3
-double A, B, a;
+double A, B, aa;
 double V_2(double r)
 {
-    double V = (A * B * pow(r, -4) - A) * exp(1/(r - a));
+    double V = (A * B * pow(r, -4) - A) * exp(1/(r - aa));
     return V;
 }
 
@@ -377,7 +331,7 @@ double V_3(double r_ij, double r_ik, double theta_jik)
 
 double Stillinger_Weber_Potential(double r_ij, double r_ik, double theta_jik)
 {
-    double V = V_2(r_ij) + V_2(r_ij, r_ik, theta_jik);
+    double V = V_2(r_ij) + V_3(r_ij, r_ik, theta_jik);
     return V;
 }
 
