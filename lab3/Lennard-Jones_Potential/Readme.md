@@ -1,13 +1,13 @@
-# Neighbor List Generator
+# Total Energy Calculator
 
 This program generates a neighbor list of atoms for different crystal structures within a specified cutoff distance.
 
 ## Features
 
-- Correct the code from Lab1
 - Supports structures of Simple Cubic (SC), Body-Centered Cubic (BCC), Face-Centered Cubic (FCC), and Diamond
 - Computes and outputs the reciprocal lattice vectors for each structure
 - Outputs a list of nearest neighbors for each structure to a text file (.txt)
+- Calculates the total energy (cohesive energy)
 
 ## Requirements
 
@@ -24,7 +24,6 @@ This program generates a neighbor list of atoms for different crystal structures
 
 3. Input the lattice constant and the number of periods in the x, y, and z directions when prompted:
    e.g.
-   Please input the lattice constant: 1
    Please input the number of period in x y z direction: 4 4 4
 
 4. The program will generate the following files:
